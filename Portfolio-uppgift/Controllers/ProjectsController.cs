@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Portfolio_uppgift.Models;
+using System.IO;
+
 
 namespace Portfolio_uppgift.Controllers
 {
@@ -46,15 +48,47 @@ namespace Portfolio_uppgift.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Title,About,Image,Link")] Project project)
+        [Authorize]
+        public ActionResult Create([Bind(Include = "ID,Title,About,Image,Link")] Project project, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
-                db.Projects.Add(project);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                var path = String.Empty;
 
+                if (image != null && image.ContentLength > 0)
+                {
+                    string extension = System.IO.Path.GetExtension(image.FileName);
+
+                    if (extension == ".jpg" || extension == ".png" || extension == ".gif")
+                    {
+                        var fileName = Path.GetFileName(image.FileName);
+                        var filePath = Path.Combine(Server.MapPath("/Content/Images"), fileName);
+
+                        try
+                        {
+                            image.SaveAs(filePath);
+                            path = String.Format("/Content/Images/{0}", fileName);
+                        }
+                        catch (Exception e)
+                        { }
+
+                        project.Image = path;
+                        db.Projects.Add(project);
+                        db.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Only .jpg, .png and .gif files allowed!";
+                    }
+                }
+                else
+                {
+                    db.Projects.Add(project);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
             return View(project);
         }
 
