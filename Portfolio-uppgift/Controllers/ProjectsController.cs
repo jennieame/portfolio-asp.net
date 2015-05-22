@@ -34,7 +34,8 @@ namespace Portfolio_uppgift.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.Link = project.Link.ToString();
+            if(project.Link != null)
+                ViewBag.Link = project.Link.ToString();
 
             return View(project);
         }
@@ -64,6 +65,8 @@ namespace Portfolio_uppgift.Controllers
 
                     if (extension == ".jpg" || extension == ".png" || extension == ".gif")
                     {
+                        DateTime dt = DateTime.Now;
+                        string date = dt.ToString();
                         var fileName = Path.GetFileName(image.FileName);
                         var filePath = Path.Combine(Server.MapPath("/Content/Images"), fileName);
 
@@ -125,39 +128,24 @@ namespace Portfolio_uppgift.Controllers
 
                 if (imageUpload != null && imageUpload.ContentLength > 0)
                 {
-                    string extension = System.IO.Path.GetExtension(imageUpload.FileName);
+                    var fileName = Path.GetFileName(imageUpload.FileName);
+                    var filePath = Path.Combine(Server.MapPath("/Content/Images"), fileName);
 
-                    if (extension == ".jpg" || extension == ".png" || extension == ".gif")
+                    try
                     {
-                        var fileName = Path.GetFileName(imageUpload.FileName);
-                        var filePath = Path.Combine(Server.MapPath("/Content/Images"), fileName);
-
-                        try
-                        {
-                            imageUpload.SaveAs(filePath);
-                            path = String.Format("/Content/Images/{0}", fileName);
-
-                            db.Entry(project).State = EntityState.Modified;
-                            db.SaveChanges();
-                            return RedirectToAction("Index");
-                        }
-                        catch (Exception e)
-                        { }
+                        imageUpload.SaveAs(filePath);
+                        path = String.Format("/Content/Images/{0}", fileName);
                     }
-                    else
-                    {
-                        ViewBag.Message = "Only .jpg, .png or .gif files allowed!";
-                    }
+                    catch (Exception e)
+                    { }
                 }
-                else 
-                { 
-                if(!String.IsNullOrEmpty(path))
+
+                if (!String.IsNullOrEmpty(path))
                     project.Image = path;
 
-                    db.Entry(project).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
+                db.Entry(project).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(project);
         }

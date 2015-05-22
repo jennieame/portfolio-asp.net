@@ -45,12 +45,15 @@
                     </div>
                 </div>
 
-                <div class="col-md-12">
-                    <label class="col-lg-2 floatRight">Uploaded</label>
-                    <div class="col-md-10">
-                        <p>@Html.DisplayFor(model => model.Image)</p>
+                @if (!String.IsNullOrEmpty(Model.Image))
+                { 
+                    <div class="form-group">
+                        <label class="col-lg-2 floatRight">Uploaded</label>
+                        <div class="col-md-10">
+                            <p>@Html.DisplayFor(model => model.Image)</p>
+                        </div>
                     </div>
-                </div>
+                }
 
                 <div class="form-group">
                     @Html.LabelFor(model => model.Link, htmlAttributes: new { @class = "control-label col-md-2" })
