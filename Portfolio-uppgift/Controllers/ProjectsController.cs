@@ -79,7 +79,7 @@ namespace Portfolio_uppgift.Controllers
                     }
                     else
                     {
-                        ViewBag.Message = "Only .jpg, .png and .gif files allowed!";
+                        ViewBag.Message = "Only .jpg, .png or .gif files allowed!";
                     }
                 }
                 else
@@ -112,13 +112,47 @@ namespace Portfolio_uppgift.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Title,About,Image,Link")] Project project)
+        public ActionResult Edit([Bind(Include = "ID,Title,About,Image,Link")] Project project, HttpPostedFileBase imageUpload)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(project).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                var path = String.Empty;
+
+                if (imageUpload != null && imageUpload.ContentLength > 0)
+                {
+                    string extension = System.IO.Path.GetExtension(imageUpload.FileName);
+
+                    if (extension == ".jpg" || extension == ".png" || extension == ".gif")
+                    {
+                        var fileName = Path.GetFileName(imageUpload.FileName);
+                        var filePath = Path.Combine(Server.MapPath("/Content/Images"), fileName);
+
+                        try
+                        {
+                            imageUpload.SaveAs(filePath);
+                            path = String.Format("/Content/Images/{0}", fileName);
+
+                            db.Entry(project).State = EntityState.Modified;
+                            db.SaveChanges();
+                            return RedirectToAction("Index");
+                        }
+                        catch (Exception e)
+                        { }
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Only .jpg, .png or .gif files allowed!";
+                    }
+                }
+                else 
+                { 
+                if(!String.IsNullOrEmpty(path))
+                    project.Image = path;
+
+                    db.Entry(project).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             return View(project);
         }
