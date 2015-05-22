@@ -40,6 +40,7 @@ namespace Portfolio_uppgift.Controllers
         }
 
         // GET: Projects/Create
+        [Authorize]
         public ActionResult Create()
         {
             return View();
@@ -95,6 +96,7 @@ namespace Portfolio_uppgift.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -114,6 +116,7 @@ namespace Portfolio_uppgift.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult Edit([Bind(Include = "ID,Title,About,Image,Link")] Project project, HttpPostedFileBase imageUpload)
         {
             if (ModelState.IsValid)
@@ -160,6 +163,7 @@ namespace Portfolio_uppgift.Controllers
         }
 
         // GET: Projects/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -177,6 +181,7 @@ namespace Portfolio_uppgift.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public ActionResult DeleteConfirmed(int id)
         {
             Project project = db.Projects.Find(id);
