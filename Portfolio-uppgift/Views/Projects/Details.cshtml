@@ -1,50 +1,31 @@
 ﻿@model Portfolio_uppgift.Models.Project
 
+@using Microsoft.AspNet.Identity
+
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = Model.Title;
 }
 
-<h2>Details</h2>
+<div class='projectImage' style='background:url("@Html.DisplayFor(model => model.Image)") no-repeat top center'></div>
 
-<div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
+<div class="headline">
+    <h1>@Html.DisplayFor(model => model.Title)</h1>
+    <p>
+        @if (Request.IsAuthenticated)
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) <span>|</span>
+            <span class="delete">@Html.ActionLink("Delete", "Delete", new { id = Model.ID })</span>
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+    </p>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.About)
-        </dt>
+    <p>@Html.DisplayFor(model => model.About)</p>
 
-        <dd>
-            @Html.DisplayFor(model => model.About)
-        </dd>
+    @if (Model.Link != null)
+    {
+        <a href="@ViewBag.Link"> <button class="btn">Visit Homepage!</button></a>
+    }
+    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Link)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Link)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<hr />
+<p class="back">@Html.ActionLink("← Back to List", "Index")</p>

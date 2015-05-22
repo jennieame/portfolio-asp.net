@@ -34,6 +34,8 @@ namespace Portfolio_uppgift.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.Link = project.Link.ToString();
+
             return View(project);
         }
 
